@@ -1,30 +1,22 @@
+```html
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>留言板 | Lala.space</title>
 
 <style>
 
 :root{
-
   --bg:#f4f9fc;
-
   --surface:rgba(255,255,255,0.45);
-
   --primary:#7da6bf;
-
   --primary-light:#a9c2d3;
-
   --text:#17323a;
-
   --muted:#5c727c;
-
   --shadow:rgba(109,144,164,0.12);
 }
 
@@ -39,7 +31,6 @@ html{
 }
 
 body{
-
   font-family:
   -apple-system,
   BlinkMacSystemFont,
@@ -58,7 +49,7 @@ body{
 
 /* =========================
    导航栏
-========================== */
+========================= */
 
 nav{
 
@@ -139,7 +130,7 @@ nav a:hover::after{
 
 /* =========================
    页面
-========================== */
+========================= */
 
 .message-page{
 
@@ -168,7 +159,7 @@ nav a:hover::after{
 
 /* =========================
    输入区域
-========================== */
+========================= */
 
 .message-box{
 
@@ -210,6 +201,8 @@ textarea{
   font-size:15px;
 
   color:var(--text);
+
+  font-family:inherit;
 }
 
 textarea{
@@ -236,6 +229,8 @@ button{
   cursor:pointer;
 
   transition:0.35s;
+
+  width:100%;
 }
 
 button:hover{
@@ -248,9 +243,18 @@ button:hover{
   0 12px 30px rgba(125,166,191,0.25);
 }
 
+button:disabled{
+
+  opacity:0.6;
+
+  cursor:not-allowed;
+
+  transform:none;
+}
+
 /* =========================
    留言区域
-========================== */
+========================= */
 
 .comments{
 
@@ -302,6 +306,10 @@ button:hover{
   line-height:1.8;
 
   margin-bottom:16px;
+
+  word-break:break-word;
+
+  white-space:pre-wrap;
 }
 
 .comment small{
@@ -309,9 +317,70 @@ button:hover{
   color:#7c95a0;
 }
 
+.empty-message{
+
+  text-align:center;
+
+  color:var(--muted);
+
+  padding:40px 20px;
+
+  font-style:italic;
+}
+
+/* =========================
+   通知
+========================= */
+
+.notification{
+
+  position:fixed;
+
+  top:20px;
+  right:20px;
+
+  padding:16px 24px;
+
+  border-radius:18px;
+
+  background:var(--primary);
+
+  color:white;
+
+  box-shadow:
+  0 10px 30px var(--shadow);
+
+  opacity:0;
+
+  transform:translateY(-10px);
+
+  transition:0.35s ease;
+
+  z-index:1001;
+
+  font-weight:500;
+}
+
+.notification.show{
+
+  opacity:1;
+
+  transform:translateY(0);
+}
+
+.notification.success{
+
+  background:#66bb6a;
+}
+
+.notification.error{
+
+  background:#ef5350;
+}
+
 /* =========================
    页脚
-========================== */
+========================= */
 
 footer{
 
@@ -326,7 +395,7 @@ footer{
 
 /* =========================
    动画
-========================== */
+========================= */
 
 @keyframes fade{
 
@@ -339,12 +408,11 @@ footer{
     opacity:1;
     transform:translateY(0);
   }
-
 }
 
 /* =========================
    手机适配
-========================== */
+========================= */
 
 @media(max-width:768px){
 
@@ -369,7 +437,6 @@ footer{
 
     font-size:38px;
   }
-
 }
 
 </style>
@@ -421,20 +488,34 @@ footer{
     id="name"
     placeholder="你的名字">
 
+    <input
+    type="email"
+    id="email"
+    placeholder="你的邮箱（可选）">
+
     <textarea
     id="message"
     placeholder="想说些什么..."></textarea>
 
-    <button onclick="addComment()">
+    <button
+    id="submitBtn"
+    onclick="addComment()">
+
       发送留言
+
     </button>
 
   </div>
 
-  <!-- 留言展示 -->
+  <!-- 留言区域 -->
 
-  <div class="comments"
+  <div
+  class="comments"
   id="comments">
+
+    <div class="empty-message">
+      还没有留言，你是第一个！✨
+    </div>
 
   </div>
 
@@ -450,98 +531,256 @@ footer{
 
 </footer>
 
-<script>
+<!-- 通知 -->
 
-/* 页面加载时读取留言 */
+<div
+id="notification"
+class="notification">
 
-window.onload = function(){
+</div>
 
-  loadComments();
+<script type="module">
+
+/* =========================
+   Firebase
+========================= */
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+
+  getFirestore,
+
+  collection,
+
+  addDoc,
+
+  query,
+
+  orderBy,
+
+  onSnapshot,
+
+  serverTimestamp
 
 }
 
-/* 添加留言 */
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-function addComment(){
+/* =========================
+   替换成你的 Firebase 配置
+========================= */
 
-  const name =
-  document.getElementById("name").value;
+const firebaseConfig = {
 
-  const message =
-  document.getElementById("message").value;
+  apiKey: "AIzaSyCbhRNT87aHPFlUzy6uGtHzyy9WoZ1k4u8",
 
-  if(name === "" || message === ""){
+  authDomain: "my-blog-33b2d.firebaseapp.com",
 
-    alert("请填写完整内容");
-    return;
-  }
+  projectId: "my-blog-33b2d",
 
-  const comment = {
+  storageBucket: "my-blog-33b2d.firebasestorage.app",
 
-    name:name,
+  messagingSenderId: "168125912080",
 
-    message:message,
+  appId: "1:168125912080:web:bb921041a4990140072695"
 
-    time:new Date()
-    .toLocaleString()
+};
+
+/* 初始化 */
+
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getFirestore(app);
+
+/* =========================
+   通知
+========================= */
+
+function showNotification(message,type="success"){
+
+  const notification =
+  document.getElementById("notification");
+
+  notification.textContent = message;
+
+  notification.className =
+  "notification show " + type;
+
+  setTimeout(()=>{
+
+    notification.classList.remove("show");
+
+  },3000);
+
+}
+
+/* =========================
+   防XSS
+========================= */
+
+function escapeHtml(text){
+
+  const map = {
+
+    '&':'&amp;',
+
+    '<':'&lt;',
+
+    '>':'&gt;',
+
+    '"':'&quot;',
+
+    "'":'&#039;'
 
   };
 
-  /* 获取已有留言 */
-
-  let comments =
-  JSON.parse(
-    localStorage.getItem("comments")
-  ) || [];
-
-  /* 新留言放最前面 */
-
-  comments.unshift(comment);
-
-  /* 保存到浏览器 */
-
-  localStorage.setItem(
-    "comments",
-    JSON.stringify(comments)
-  );
-
-  /* 清空输入框 */
-
-  document.getElementById("name").value = "";
-
-  document.getElementById("message").value = "";
-
-  /* 重新加载 */
-
-  loadComments();
+  return text.replace(/[&<>"']/g,m=>map[m]);
 
 }
 
-/* 加载留言 */
+/* =========================
+   添加留言
+========================= */
 
-function loadComments(){
+window.addComment =
+async function(){
 
-  const commentsContainer =
-  document.getElementById("comments");
+  const name =
+  document.getElementById("name")
+  .value.trim();
 
-  let comments =
-  JSON.parse(
-    localStorage.getItem("comments")
-  ) || [];
+  const email =
+  document.getElementById("email")
+  .value.trim();
+
+  const message =
+  document.getElementById("message")
+  .value.trim();
+
+  const submitBtn =
+  document.getElementById("submitBtn");
+
+  if(name === "" || message === ""){
+
+    showNotification(
+      "请填写名字和留言内容！",
+      "error"
+    );
+
+    return;
+  }
+
+  submitBtn.disabled = true;
+
+  submitBtn.innerText = "发送中...";
+
+  try{
+
+    await addDoc(
+      collection(db,"comments"),
+
+      {
+
+        name:name,
+
+        email:email || "",
+
+        message:message,
+
+        createdAt:serverTimestamp()
+
+      }
+
+    );
+
+    showNotification(
+      `感谢 ${name} 的留言 ✨`
+    );
+
+    document.getElementById("name").value = "";
+
+    document.getElementById("email").value = "";
+
+    document.getElementById("message").value = "";
+
+  }catch(error){
+
+    console.error(error);
+
+    showNotification(
+      "发送失败，请检查 Firebase 配置",
+      "error"
+    );
+
+  }
+
+  submitBtn.disabled = false;
+
+  submitBtn.innerText = "发送留言";
+
+}
+
+/* =========================
+   实时加载留言
+========================= */
+
+const commentsContainer =
+document.getElementById("comments");
+
+const q =
+query(
+  collection(db,"comments"),
+  orderBy("createdAt","desc")
+);
+
+onSnapshot(q,(snapshot)=>{
 
   commentsContainer.innerHTML = "";
 
-  comments.forEach(comment => {
+  if(snapshot.empty){
+
+    commentsContainer.innerHTML = `
+
+      <div class="empty-message">
+
+        还没有留言，你是第一个！✨
+
+      </div>
+
+    `;
+
+    return;
+  }
+
+  snapshot.forEach((doc)=>{
+
+    const data = doc.data();
+
+    const date =
+    data.createdAt?.toDate
+    ? data.createdAt.toDate()
+    .toLocaleString("zh-CN")
+    : "刚刚";
 
     commentsContainer.innerHTML += `
 
       <div class="comment">
 
-        <h3>${comment.name}</h3>
+        <h3>
+          ${escapeHtml(data.name)}
+        </h3>
 
-        <p>${comment.message}</p>
+        <p>
+          ${escapeHtml(data.message)}
+        </p>
 
-        <small>${comment.time}</small>
+        <small>
+          ${date}
+        </small>
 
       </div>
 
@@ -549,9 +788,10 @@ function loadComments(){
 
   });
 
-}
+});
 
 </script>
 
 </body>
 </html>
+```
