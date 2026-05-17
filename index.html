@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lala's Space</title>
+
+  <style>
+
+    :root{
+      --bg:#f4f9fc;
+      --surface:rgba(255,255,255,0.45);
+      --surface-solid:#edf5fa;
+
+      --primary:#7da6bf;
+      --primary-light:#a9c2d3;
+
+      --text:#17323a;
+      --muted:#5c727c;
+
+      --shadow:rgba(109,144,164,0.12);
+    }
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    html{
+      scroll-behavior:smooth;
+    }
+
+    body{
+
+      font-family:
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
+
+      color:var(--text);
+
+      background:
+      radial-gradient(circle at top left,#ffffff 0%,transparent 30%),
+      linear-gradient(to bottom,#f4f9fc,#e9f2f8);
+
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    /* =========================
+       导航栏
+    ========================== */
+
+    nav{
+
+      position:sticky;
+      top:0;
+
+      z-index:999;
+
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+
+      padding:20px 8%;
+
+      background:rgba(255,255,255,0.45);
+
+      backdrop-filter:blur(14px);
+
+      border-bottom:
+      1px solid rgba(255,255,255,0.35);
+    }
+
+    .logo{
+      font-size:24px;
+      font-weight:700;
+      color:var(--primary);
+
+      letter-spacing:1px;
+    }
+
+    nav ul{
+      display:flex;
+      gap:28px;
+
+      list-style:none;
+    }
+
+    nav a{
+
+      text-decoration:none;
+      color:var(--text);
+
+      transition:0.3s;
+      position:relative;
+    }
+
+    nav a::after{
+
+      content:"";
+
+      position:absolute;
+      left:0;
+      bottom:-5px;
+
+      width:0%;
+      height:2px;
+
+      background:var(--primary);
+
+      transition:0.3s;
+    }
+
+    nav a:hover{
+      color:var(--primary);
+    }
+
+    nav a:hover::after{
+      width:100%;
+    }
+
+    /* =========================
+       首页区域
+    ========================== */
+
+    .hero{
+
+      min-height:92vh;
+
+      display:flex;
+      flex-direction:column;
+
+      justify-content:center;
+      align-items:center;
+
+      text-align:center;
+
+      padding:120px 20px;
+    }
+
+    .avatar{
+
+      width:190px;
+      height:190px;
+
+      object-fit:cover;
+
+      border-radius:50%;
+
+      border:6px solid rgba(255,255,255,0.8);
+
+      box-shadow:
+      0 15px 40px rgba(0,0,0,0.10);
+
+      margin-bottom:30px;
+
+      transition:0.5s ease;
+    }
+
+    .avatar:hover{
+
+      transform:
+      translateY(-6px)
+      scale(1.03)
+      rotate(2deg);
+
+      box-shadow:
+      0 25px 50px rgba(0,0,0,0.14);
+    }
+
+    .hero h1{
+
+      font-size:58px;
+      margin-bottom:20px;
+
+      letter-spacing:1px;
+    }
+
+    .hero p{
+
+      max-width:650px;
+
+      color:var(--muted);
+
+      font-size:17px;
+      line-height:1.9;
+
+      margin-bottom:35px;
+    }
+
+    .hero button{
+
+      border:none;
+
+      background:var(--primary);
+      color:white;
+
+      padding:14px 30px;
+
+      border-radius:999px;
+
+      font-size:15px;
+
+      cursor:pointer;
+
+      transition:0.35s;
+    }
+
+    .hero button:hover{
+
+      transform:translateY(-4px);
+
+      background:#7098b0;
+
+      box-shadow:
+      0 12px 30px rgba(125,166,191,0.25);
+    }
+
+    /* =========================
+       卡片区域
+    ========================== */
+
+    .cards{
+
+      width:100%;
+
+      display:grid;
+
+      grid-template-columns:
+      repeat(auto-fit,minmax(260px,1fr));
+
+      gap:28px;
+
+      padding:40px 8% 100px;
+    }
+
+    .card{
+
+      background:var(--surface);
+
+      backdrop-filter:blur(14px);
+
+      border:
+      1px solid rgba(255,255,255,0.45);
+
+      border-radius:28px;
+
+      padding:32px;
+
+      transition:0.4s ease;
+
+      box-shadow:
+      0 10px 30px var(--shadow);
+    }
+
+    .card:hover{
+
+      transform:translateY(-10px);
+
+      box-shadow:
+      0 18px 40px rgba(125,166,191,0.18);
+    }
+
+    .card h2{
+
+      margin-bottom:16px;
+
+      color:var(--primary);
+
+      font-size:24px;
+    }
+
+    .card p{
+
+      color:var(--muted);
+
+      line-height:1.8;
+    }
+
+    /* =========================
+       日志区域
+    ========================== */
+
+    .section-title{
+
+      text-align:center;
+
+      font-size:38px;
+
+      margin-bottom:50px;
+
+      color:var(--primary);
+    }
+
+    .diary{
+
+      padding:0 8% 120px;
+    }
+
+    .post{
+
+      background:rgba(255,255,255,0.5);
+
+      backdrop-filter:blur(12px);
+
+      border-radius:28px;
+
+      padding:35px;
+
+      margin-bottom:30px;
+
+      border:
+      1px solid rgba(255,255,255,0.45);
+
+      transition:0.35s;
+    }
+
+    .post:hover{
+
+      transform:translateY(-6px);
+
+      box-shadow:
+      0 15px 35px rgba(125,166,191,0.16);
+    }
+
+    .post-date{
+
+      color:var(--primary);
+
+      font-size:15px;
+
+      margin-bottom:14px;
+    }
+
+    .post h3{
+
+      margin-bottom:15px;
+
+      font-size:28px;
+    }
+
+    .post p{
+
+      color:var(--muted);
+
+      line-height:1.9;
+    }
+
+    .tags{
+
+      margin-top:20px;
+
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .tag{
+
+      padding:8px 14px;
+
+      background:#dfeef7;
+
+      border-radius:999px;
+
+      color:#5d7d90;
+
+      font-size:13px;
+    }
+
+    /* =========================
+       页脚
+    ========================== */
+
+    footer{
+
+      text-align:center;
+
+      padding:40px 20px;
+
+      color:var(--muted);
+
+      font-size:14px;
+    }
+
+    /* =========================
+       手机适配
+    ========================== */
+
+    @media(max-width:768px){
+
+      nav{
+
+        flex-direction:column;
+        gap:18px;
+      }
+
+      nav ul{
+        gap:18px;
+      }
+
+      .hero{
+        padding-top:80px;
+      }
+
+      .hero h1{
+        font-size:38px;
+      }
+
+      .hero p{
+        font-size:15px;
+      }
+
+      .avatar{
+
+        width:150px;
+        height:150px;
+      }
+
+      .section-title{
+        font-size:30px;
+      }
+
+      .post h3{
+        font-size:22px;
+      }
+
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- 导航栏 -->
+
+  <nav>
+
+    <div class="logo">
+      Lala.space
+    </div>
+
+    <ul>
+    <li><a href="html">首页</a></li>
+    <li><a href="#diary">日志</a></li>
+    <li><a href="about.html">关于</a></li>
+    <li><a href="message.html">留言</a></li>
+    </ul>
+
+  </nav>
+
+  <!-- 首页 -->
+
+  <section class="hero">
+
+    <img src="lala.jpg" alt="头像" class="avatar">
+
+    <h1>
+      欢迎来到我的小世界
+    </h1>
+
+    <p>
+      会不定时更新生活、游戏、设计、AI研究和一些碎碎念。
+      <br>
+      希望路过这里的人，都能开开心心。
+    </p>
+
+    <button onclick="scrollToDiary()">
+      查看最近动态
+    </button>
+
+  </section>
+
+  <!-- 卡片 -->
+
+  <section class="cards">
+
+    <div class="card">
+      <h2>🎮 游戏</h2>
+
+      <p>
+        OW / Apex / 独立游戏 / 游戏研究 /
+        社交媒体风格设计。
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>🎨 设计</h2>
+
+      <p>
+        UI设计、社区视觉、网页布局、
+        极简低饱和美学。
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>🤖 AI</h2>
+
+      <p>
+        调教AI、智能体研究、
+        产品运营和互联网观察。
+      </p>
+    </div>
+
+  </section>
+
+  <!-- 日志 -->
+
+  <section class="diary" id="diary">
+
+    <h2 class="section-title">
+      最近日志
+    </h2>
+
+    <div class="post">
+
+      <div class="post-date">
+        2026 / 05 / 17
+      </div>
+
+      <h3>
+        我终于开始学习做自己的个人网站了
+      </h3>
+
+      <p>
+        从最开始只会写一个 h1 标签，
+        到现在慢慢做出自己喜欢的风格。
+        有种回到早期互联网的感觉。
+      </p>
+
+      <div class="tags">
+
+        <div class="tag">#网站</div>
+
+        <div class="tag">#设计</div>
+
+        <div class="tag">#生活</div>
+
+      </div>
+
+    </div>
+
+    <div class="post">
+
+      <div class="post-date">
+        2026 / 05 / 12
+      </div>
+
+      <h3>
+        最近沉迷研究 AI 和社区产品
+      </h3>
+
+      <p>
+        每天都在研究各种互联网产品，
+        有时候感觉自己像数字世界里的流浪者。
+      </p>
+
+      <div class="tags">
+
+        <div class="tag">#AI</div>
+
+        <div class="tag">#产品</div>
+
+        <div class="tag">#互联网</div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- 页脚 -->
+
+  <footer>
+
+    © 2026 Lala.space
+    <br>
+    祝点进这里的人永远不死。
+
+  </footer>
+
+  <script>
+
+    function scrollToDiary(){
+
+      document.getElementById("diary")
+      .scrollIntoView({
+        behavior:"smooth"
+      });
+
+    }
+
+  </script>
+
+</body>
+</html>

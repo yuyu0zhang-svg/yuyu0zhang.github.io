@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>留言板 | Lala.space</title>
+
+<style>
+
+:root{
+
+  --bg:#f4f9fc;
+
+  --surface:rgba(255,255,255,0.45);
+
+  --primary:#7da6bf;
+
+  --primary-light:#a9c2d3;
+
+  --text:#17323a;
+
+  --muted:#5c727c;
+
+  --shadow:rgba(109,144,164,0.12);
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+
+  font-family:
+  -apple-system,
+  BlinkMacSystemFont,
+  "Segoe UI",
+  Roboto,
+  sans-serif;
+
+  color:var(--text);
+
+  background:
+  radial-gradient(circle at top left,#ffffff 0%,transparent 30%),
+  linear-gradient(to bottom,#f4f9fc,#e9f2f8);
+
+  min-height:100vh;
+}
+
+/* =========================
+   导航栏
+========================== */
+
+nav{
+
+  position:sticky;
+  top:0;
+
+  z-index:999;
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  padding:20px 8%;
+
+  background:rgba(255,255,255,0.45);
+
+  backdrop-filter:blur(14px);
+
+  border-bottom:
+  1px solid rgba(255,255,255,0.35);
+}
+
+.logo{
+
+  font-size:24px;
+  font-weight:700;
+
+  color:var(--primary);
+
+  letter-spacing:1px;
+}
+
+nav ul{
+
+  display:flex;
+  gap:28px;
+
+  list-style:none;
+}
+
+nav a{
+
+  text-decoration:none;
+
+  color:var(--text);
+
+  transition:0.3s;
+
+  position:relative;
+}
+
+nav a::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:0;
+  bottom:-5px;
+
+  width:0%;
+  height:2px;
+
+  background:var(--primary);
+
+  transition:0.3s;
+}
+
+nav a:hover{
+
+  color:var(--primary);
+}
+
+nav a:hover::after{
+
+  width:100%;
+}
+
+/* =========================
+   页面
+========================== */
+
+.message-page{
+
+  padding:120px 20px;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.message-page h1{
+
+  font-size:56px;
+
+  margin-bottom:18px;
+}
+
+.message-page p{
+
+  color:var(--muted);
+
+  margin-bottom:40px;
+
+  text-align:center;
+}
+
+/* =========================
+   输入区域
+========================== */
+
+.message-box{
+
+  width:100%;
+  max-width:720px;
+
+  background:var(--surface);
+
+  backdrop-filter:blur(14px);
+
+  border:
+  1px solid rgba(255,255,255,0.45);
+
+  border-radius:30px;
+
+  padding:32px;
+
+  box-shadow:
+  0 10px 30px var(--shadow);
+}
+
+input,
+textarea{
+
+  width:100%;
+
+  border:none;
+
+  outline:none;
+
+  padding:18px;
+
+  margin-bottom:20px;
+
+  border-radius:18px;
+
+  background:#f8fcff;
+
+  font-size:15px;
+
+  color:var(--text);
+}
+
+textarea{
+
+  min-height:180px;
+
+  resize:none;
+}
+
+button{
+
+  border:none;
+
+  background:var(--primary);
+
+  color:white;
+
+  padding:14px 30px;
+
+  border-radius:999px;
+
+  font-size:15px;
+
+  cursor:pointer;
+
+  transition:0.35s;
+}
+
+button:hover{
+
+  transform:translateY(-4px);
+
+  background:#7098b0;
+
+  box-shadow:
+  0 12px 30px rgba(125,166,191,0.25);
+}
+
+/* =========================
+   留言区域
+========================== */
+
+.comments{
+
+  width:100%;
+  max-width:720px;
+
+  margin-top:40px;
+}
+
+.comment{
+
+  background:rgba(255,255,255,0.5);
+
+  backdrop-filter:blur(12px);
+
+  border:
+  1px solid rgba(255,255,255,0.45);
+
+  border-radius:26px;
+
+  padding:28px;
+
+  margin-bottom:24px;
+
+  animation:fade 0.4s ease;
+
+  transition:0.35s;
+}
+
+.comment:hover{
+
+  transform:translateY(-5px);
+
+  box-shadow:
+  0 15px 35px rgba(125,166,191,0.15);
+}
+
+.comment h3{
+
+  color:var(--primary);
+
+  margin-bottom:12px;
+}
+
+.comment p{
+
+  color:var(--muted);
+
+  line-height:1.8;
+
+  margin-bottom:16px;
+}
+
+.comment small{
+
+  color:#7c95a0;
+}
+
+/* =========================
+   页脚
+========================== */
+
+footer{
+
+  text-align:center;
+
+  padding:40px 20px;
+
+  color:var(--muted);
+
+  font-size:14px;
+}
+
+/* =========================
+   动画
+========================== */
+
+@keyframes fade{
+
+  from{
+    opacity:0;
+    transform:translateY(10px);
+  }
+
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+}
+
+/* =========================
+   手机适配
+========================== */
+
+@media(max-width:768px){
+
+  nav{
+
+    flex-direction:column;
+
+    gap:18px;
+  }
+
+  nav ul{
+
+    gap:18px;
+  }
+
+  .message-page{
+
+    padding-top:90px;
+  }
+
+  .message-page h1{
+
+    font-size:38px;
+  }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- 导航栏 -->
+
+<nav>
+
+  <div class="logo">
+    Lala.space
+  </div>
+
+  <ul>
+
+    <li><a href="index.html">首页</a></li>
+
+    <li><a href="about.html">关于</a></li>
+
+    <li><a href="message.html">留言</a></li>
+
+  </ul>
+
+</nav>
+
+<!-- 页面 -->
+
+<section class="message-page">
+
+  <h1>
+    留言板
+  </h1>
+
+  <p>
+    欢迎留下你的痕迹。
+    <br>
+    也许某天我会再次看到。
+  </p>
+
+  <!-- 输入框 -->
+
+  <div class="message-box">
+
+    <input
+    type="text"
+    id="name"
+    placeholder="你的名字">
+
+    <textarea
+    id="message"
+    placeholder="想说些什么..."></textarea>
+
+    <button onclick="addComment()">
+      发送留言
+    </button>
+
+  </div>
+
+  <!-- 留言展示 -->
+
+  <div class="comments"
+  id="comments">
+
+  </div>
+
+</section>
+
+<!-- 页脚 -->
+
+<footer>
+
+  © 2026 Lala.space
+  <br>
+  嘿嘿。
+
+</footer>
+
+<script>
+
+/* 页面加载时读取留言 */
+
+window.onload = function(){
+
+  loadComments();
+
+}
+
+/* 添加留言 */
+
+function addComment(){
+
+  const name =
+  document.getElementById("name").value;
+
+  const message =
+  document.getElementById("message").value;
+
+  if(name === "" || message === ""){
+
+    alert("请填写完整内容");
+    return;
+  }
+
+  const comment = {
+
+    name:name,
+
+    message:message,
+
+    time:new Date()
+    .toLocaleString()
+
+  };
+
+  /* 获取已有留言 */
+
+  let comments =
+  JSON.parse(
+    localStorage.getItem("comments")
+  ) || [];
+
+  /* 新留言放最前面 */
+
+  comments.unshift(comment);
+
+  /* 保存到浏览器 */
+
+  localStorage.setItem(
+    "comments",
+    JSON.stringify(comments)
+  );
+
+  /* 清空输入框 */
+
+  document.getElementById("name").value = "";
+
+  document.getElementById("message").value = "";
+
+  /* 重新加载 */
+
+  loadComments();
+
+}
+
+/* 加载留言 */
+
+function loadComments(){
+
+  const commentsContainer =
+  document.getElementById("comments");
+
+  let comments =
+  JSON.parse(
+    localStorage.getItem("comments")
+  ) || [];
+
+  commentsContainer.innerHTML = "";
+
+  comments.forEach(comment => {
+
+    commentsContainer.innerHTML += `
+
+      <div class="comment">
+
+        <h3>${comment.name}</h3>
+
+        <p>${comment.message}</p>
+
+        <small>${comment.time}</small>
+
+      </div>
+
+    `;
+
+  });
+
+}
+
+</script>
+
+</body>
+</html>
